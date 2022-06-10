@@ -733,7 +733,7 @@ window.WAPI.ReplyMessage = function (idMessage, message, done) {
 
 window.WAPI.sendMessageToID = function (id, message, done) {
     try {
-        var chat = window.Store.Chat.find(id);
+        var chat = window.Store.FindChat.findChat(id);
 	    if(chat.length === 0)
 	    {
 		chat._value.sendMessage(message);done(true);return true;
@@ -745,7 +745,7 @@ window.WAPI.sendMessageToID = function (id, message, done) {
             if (contact.status === 404) {
                 done(true);
             } else {
-                Store.Chat.find(contact.jid).then(chat => {
+                Store.FindChat.findChat(contact.jid).then(chat => {
                     chat.sendMessage(message);
                     return true;
                 }).catch(reject => {
@@ -1253,7 +1253,7 @@ function send(chat){
 }
 
 // create new chat
-return Store.Chat.find(idUser).then((chat) => {
+return Store.FindChat.findChat(idUser).then((chat) => {
     send(chat)
 }).catch(err => {
     // Query the mobile phone number and obtain the mobile phone number, there are differences
