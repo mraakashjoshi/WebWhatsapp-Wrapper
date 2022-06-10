@@ -11,6 +11,7 @@ if (!window.Store) {
         function getStore(modules) {
         let foundCount = 0;
 		let neededObjects = [
+		{ id: 'FindChat', conditions: (module) => (module && module.findChat)?module : null},
                 { id: "Store", conditions: (module) => (module.default && module.default.Chat && module.default.Msg) ? module.default : null },
                 { id: "MediaCollection", conditions: (module) => (module.default && module.default.prototype && module.default.prototype.processAttachments) ? module.default : null },
                 { id: "MediaProcess", conditions: (module) => (module.BLOB) ? module : null },
@@ -732,7 +733,12 @@ window.WAPI.ReplyMessage = function (idMessage, message, done) {
 
 window.WAPI.sendMessageToID = function (id, message, done) {
     try {
-        window.getContact = (id) => {
+        var chat = window.Store.Chat.find(id);
+	    if(chat.length === 0)
+	    {
+		chat._value.sendMessage(message);done(true);return true;
+	    } 
+	    window.getContact = (id) => {
             return Store.WapQuery.queryExist(id);
         }
         window.getContact(id).then(contact => {
@@ -1227,7 +1233,40 @@ window.WAPI.getBufferedNewMessages = function (done) {
 };
 /** End new messages observable functions **/
 
+
+
 window.WAPI.sendImage = function (imgBase64, chatid, filename, caption, done) {
+//var idUser = new window.Store.UserConstructor(chatid);
+var idUser = new window.Store.UserConstructor(chatid, { intentionallyUsePrivateConstructor: true });
+
+function send(chat){
+    var mediaBlob = window.WAPI.base64ImageToFile(imgBase64, filename);
+    var mc = new Store.MediaCollection(chat);
+    mc.processAttachments([{ file: mediaBlob }, 1], chat, 1).then(() => {
+        // var media = mc.models[0];
+        var media = mc._models[0];
+        media.sendToChat(chat, { caption: caption });
+        if (done !== undefined) done(true);
+    }).catch(err =>{
+        console.log("upload --- handle---error", err)
+    })
+}
+
+// create new chat
+return Store.Chat.find(idUser).then((chat) => {
+    send(chat)
+}).catch(err => {
+    // Query the mobile phone number and obtain the mobile phone number, there are differences
+    // (610481277023 :: 61481277023)
+    // Use the current chat window
+    let activeChat = Store.Chat.getActive() 
+    send(activeChat)
+})
+}
+
+
+
+window.WAPI.sendImageOLD = function (imgBase64, chatid, filename, caption, done) {
 //var idUser = new window.Store.UserConstructor(chatid);
 var idUser = new window.Store.UserConstructor(chatid, { intentionallyUsePrivateConstructor: true });
 // create new chat
