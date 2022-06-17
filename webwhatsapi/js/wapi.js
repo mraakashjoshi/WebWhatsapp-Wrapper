@@ -6,8 +6,8 @@ This script contains WAPI functions that need to be run in the context of the we
 
 Auto discovery the webpack object references of instances that contains all functions used by the WAPI
 functions and creates the Store object.
-{ id: "WapQuery", conditions: (module) => (module.default && module.default.queryExist) ? module.default : null},
-{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },
+ÐÂµÄ£º{ id: "WapQuery", conditions: (module) => (module.default && module.default.queryExist) ? module.default : null},
+¾ÉµÄ£º{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },
 */
 if (!window.Store) {
 (function() {
