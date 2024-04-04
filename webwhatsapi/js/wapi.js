@@ -1,6 +1,3 @@
-//Version_JS;Version_TInjectMin;Version_CEF4Min;
-//3.0.0.0;1.0.0.9;78.3.0
-
 function getAllGroupContacts(Contacts) {
 	SetConsoleMessage("GetAllGroupContacts", JSON.stringify(Contacts));	
 }
@@ -135,7 +132,6 @@ const newMakeStore = () => {
                 self.ErrorGuard.skipGuardGlobal(true);
                 Object.assign(modulesFactory[key], self.importNamespace(key));
             }catch(e){
-				//
             }
         }
     }
@@ -157,8 +153,8 @@ const newMakeStore = () => {
 			{ id: "_Presence", conditions: (module) => (module.setPresenceAvailable && module.setPresenceUnavailable) ? module : null },
 			{ id: "WapDelete", conditions: (module) => (module.sendConversationDelete && module.sendConversationDelete.length == 2) ? module : null },
 			{ id: 'FindChat', conditions: (module) => (module && module.findChat) ? module : null},
-			{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },//Mike 28/10/2022
-			{ id: "WapQueryMD", conditions: (module) => (module.queryExists && module.queryPhoneExists) || (module.queryWidExists && module.queryPhoneExists) ? module : null}, //MD Mike 09/11/2021				
+			{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },
+			{ id: "WapQueryMD", conditions: (module) => (module.queryExists && module.queryPhoneExists) || (module.queryWidExists && module.queryPhoneExists) ? module : null}, 
 			{ id: 'Perfil', conditions: (module) => module.__esModule === true && module.setPushname && !module.getComposeContents ? module : null},
 			{ id: "CryptoLib", conditions: (module) => (module.decryptE2EMedia) ? module : null },
 			{ id: "OpenChat", conditions: (module) => (module.default && module.default.prototype && module.default.prototype.openChat) ? module.default : null },
@@ -275,7 +271,6 @@ const newMakeStore = () => {
         window.Store.Chat.modelClass.prototype.sendMessage = function (e) {
             window.Store.SendTextMsgToChat(this, ...arguments);
         }
-        //console.log(window.Store)
         return window.Store;
     }
 
@@ -304,8 +299,8 @@ const oldMakeStore = () => {
 				{ id: "_Presence", conditions: (module) => (module.setPresenceAvailable && module.setPresenceUnavailable) ? module : null },
 				{ id: "WapDelete", conditions: (module) => (module.sendConversationDelete && module.sendConversationDelete.length == 2) ? module : null },
 				{ id: 'FindChat', conditions: (module) => (module && module.findChat) ? module : null},
-				{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },//Mike 28/10/2022
-				{ id: "WapQueryMD", conditions: (module) => (module.queryExists && module.queryPhoneExists) || (module.queryWidExists && module.queryPhoneExists) ? module : null}, //MD Mike 09/11/2021				
+				{ id: "WapQuery", conditions: (module) => (module.queryExist) ? module : ((module.default && module.default.queryExist) ? module.default : null) },
+				{ id: "WapQueryMD", conditions: (module) => (module.queryExists && module.queryPhoneExists) || (module.queryWidExists && module.queryPhoneExists) ? module : null}, 
 				{ id: 'Perfil', conditions: (module) => module.__esModule === true && module.setPushname && !module.getComposeContents ? module : null},
 				{ id: "CryptoLib", conditions: (module) => (module.decryptE2EMedia) ? module : null },
 				{ id: "OpenChat", conditions: (module) => (module.default && module.default.prototype && module.default.prototype.openChat) ? module.default : null },
@@ -522,15 +517,13 @@ window.WAPI._serializeMessageObj = (obj) => {
 
     return Object.assign(window.WAPI._serializeRawObj(obj), {
         id: obj.id._serialized,
-        //add 02/06/2020 mike -->
-		quotedParticipant: obj.quotedParticipant? obj.quotedParticipant._serialized ? obj.quotedParticipant._serialized : undefined : undefined,
+	quotedParticipant: obj.quotedParticipant? obj.quotedParticipant._serialized ? obj.quotedParticipant._serialized : undefined : undefined,
         author: obj.author? obj.author._serialized ? obj.author._serialized : undefined : undefined,
         chatId: obj.chatId? obj.chatId._serialized ? obj.chatId._serialized : undefined : undefined,
         to: obj.to? obj.to._serialized ? obj.to._serialized : undefined : undefined,
         fromMe: obj.id.fromMe,
-		//add 02/06/2020 mike <--
 		
-		sender: obj["senderObj"] ? WAPI._serializeContactObj(obj["senderObj"]) : null,
+	sender: obj["senderObj"] ? WAPI._serializeContactObj(obj["senderObj"]) : null,
         timestamp: obj["t"],
         content: obj["body"],
         isGroupMsg: obj.isGroupMsg,
@@ -784,7 +777,6 @@ window.WAPI.getAllGroups = function(done) {
 	SetConsoleMessage("getAllGroups", JSON.stringify(arrGroups));
 }; 
 
-//01/06/2020
 window.WAPI.getAllGroupsList = function(done) {
     const contacts = window.Store.Contact.map((contact) => WAPI._serializeContactObj(contact));
 
@@ -887,13 +879,6 @@ window.WAPI.getGeneratedUserAgent = function (useragent) {
 window.WAPI.getWAVersion = function () {
     return window.Debug.VERSION;
 }
-
-/**
- * Automatically sends a link with the auto generated link preview. You can also add a custom message to be added.
- * @param chatId 
- * @param url string A link, for example for youtube. e.g https://www.youtube.com/watch?v=61O-Galzc5M
- * @param text string Custom text as body of the message, this needs to include the link or it will be appended after the link.
- */
 window.WAPI.sendLinkWithAutoPreview = async function (chatId, url, text) { 
     var idUser = new window.Store.UserConstructor(chatId, {
         intentionallyUsePrivateConstructor: true
@@ -912,11 +897,10 @@ window.WAPI.sendLinkWithAutoPreview = async function (chatId, url, text) {
     var newId = window.WAPI.getNewMessageId(chatId);
 
     var message =  {
-		id: newId,
+	id: newId,
         ack: 0,
         body: `${url}\n${text}`,
-        //from: fromwWid._serialized, //MD
-		from: fromwWid,
+	from: fromwWid,
         to: contact.id,
         local: !0,
         self: 'out',
@@ -946,7 +930,7 @@ window.WAPI.sendMessageWithThumb = function (thumb, url, title, description, tex
         description: description,
         matchedText: url,
         title: title,
-        thumbnail: thumb // Thumbnail max size allowed: 200x200
+        thumbnail: thumb
     };
     chatSend.sendMessage(text.includes(url) ? text : `${url}\n${text}`, { linkPreview: linkPreview, mentionedJidList: [], quotedMsg: null, quotedMsgAdminGroupJid: null });
     return true;
@@ -993,51 +977,31 @@ window.WAPI.getChatById = function(id, done) {
  * :rtype: object
  */
 window.WAPI.getUnreadMessagesInChat = function(id, includeMe, includeNotifications, done) {
-    // get chat and its messages
     let chat = WAPI.getChat(id);
     let messages = chat.msgs._models;
 
-    // initialize result list
     let output = [];
 
-    // look for unread messages, newest is at the end of array
     for (let i = messages.length - 1; i >= 0; i--) {
-        // system message: skip it
         if (i === "remove") {
             continue;
         }
-
-        // get message
         let messageObj = messages[i];
-
-        // found a read message: stop looking for others
         if (typeof(messageObj.isNewMsg) !== "boolean" || messageObj.isNewMsg === false) {
             continue;
         } else {
             messageObj.isNewMsg = false;
-            // process it
             let message = WAPI.processMessageObj(messageObj,
                 includeMe,
                 includeNotifications);
-
-            // save processed message on result list
             if (message)
                 output.push(message);
         }
     }
-    // callback was passed: run it
     if (done !== undefined) done(output);
-    // return result list
     return output;
 };
 
-/**
- * Load more messages in chat object from store by ID
- *
- * @param id ID of chat
- * @param done Optional callback function for async execution
- * @returns None
- */
 window.WAPI.loadEarlierMessages = function(id, done) {
     const found = WAPI.getChat(id);
     if (done !== undefined) {
@@ -1049,13 +1013,6 @@ window.WAPI.loadEarlierMessages = function(id, done) {
     }
 };
 
-/**
- * Load more messages in chat object from store by ID
- *
- * @param id ID of chat
- * @param done Optional callback function for async execution
- * @returns None
- */
 window.WAPI.loadAllEarlierMessages = function(id, done) {
     const found = WAPI.getChat(id);
     x = function() {
@@ -1083,15 +1040,6 @@ window.WAPI.areAllMessagesLoaded = function(id, done) {
     return true
 };
 
-/**
- * Load more messages in chat object from store by ID till a particular date
- *
- * @param id ID of chat
- * @param lastMessage UTC timestamp of last message to be loaded
- * @param done Optional callback function for async execution
- * @returns None
- */
-
 window.WAPI.loadEarlierMessagesTillDate = function(id, lastMessage, done) {
     const found = WAPI.getChat(id);
     x = function() {
@@ -1104,12 +1052,6 @@ window.WAPI.loadEarlierMessagesTillDate = function(id, lastMessage, done) {
     x();
 };
 
-/**
- * Fetches all group metadata objects from store
- *
- * @param done Optional callback function for async execution
- * @returns {Array|*} List of group metadata
- */
 window.WAPI.getAllGroupMetadata = function(done) {
     const groupData = window.Store.GroupMetadata.map((groupData) => groupData.all);
 
@@ -1117,37 +1059,14 @@ window.WAPI.getAllGroupMetadata = function(done) {
     return groupData;
 };
 
-/**
- * Fetches group metadata object from store by ID
- *
- * @param id ID of group
- * @param done Optional callback function for async execution
- * @returns {T|*} Group metadata object
- */
-
 window.WAPI.getGroupMetadata = async function (id) {
     return window.Store.GroupMetadata.find(id);
 };
 
-/**
- * Fetches group participants
- *
- * @param id ID of group
- * @returns {Promise.<*>} Yields group metadata
- * @private
- */
 window.WAPI._getGroupParticipants = async function(id) {
     const metadata = await WAPI.getGroupMetadata(id);
     return metadata.participants;
 };
-
-/**
- * Fetches IDs of group participants
- *
- * @param id ID of group
- * @param done Optional callback function for async execution
- * @returns {Promise.<Array|*>} Yields list of IDs
- */
 
 window.WAPI.getGroupParticipantIDs = async function(id, done) {
     const output = (await WAPI._getGroupParticipants(id))
@@ -1175,11 +1094,6 @@ window.WAPI.getGroupAdmins = async function(id, done) {
     return output;
 };
 
-/**
- * Gets object representing the logged in user
- *
- * @returns {Array|*|$q.all}
- */
 window.WAPI.getMe = function(done) {
     const rawMe = window.Store.Contact.get(window.Store.Conn.me);
 
@@ -1188,14 +1102,12 @@ window.WAPI.getMe = function(done) {
 };
 
 window.WAPI.isLoggedIn = function(done) {
-    // Contact always exists when logged in
     const isLogged = window.Store.Contact && window.Store.Contact.checksum !== undefined;
 
     if (done !== undefined) done(isLogged);
     return isLogged;
 };
 
-//Funcao para saber o status do servico - Mike 26/02/2020
 window.WAPI.isConnected = function (done) {
     const isConnected = document.querySelector('*[data-icon="alert-phone"]') !== null ? false : true;
 
@@ -1235,13 +1147,11 @@ window.WAPI.processMessageObj = function(messageObj, includeMe, includeNotificat
             return WAPI._serializeMessageObj(messageObj);
         else
             return;
-        // System message
-        // (i.e. "Messages you send to this chat and calls are now secured with end-to-end encryption...")
+
     } else if (messageObj.id.fromMe === false || includeMe) {
         return WAPI._serializeMessageObj(messageObj);
     }
 
-    //SetConsoleMessage("processMessageObj", JSON.stringify(messageObj));
     return;
 };
 
@@ -1256,8 +1166,7 @@ window.WAPI.getAllMessagesInChat = function(id, includeMe, includeNotifications,
         }
         const messageObj = messages[i];
 
-        //Miro Emidio - 05/Dez/2019 Alterado para funcionamento em WHATS empresarial/pessoal
-        let message = WAPI.processMessageObj(messageObj, includeMe, false) //includeNotifications
+        let message = WAPI.processMessageObj(messageObj, includeMe, false) 
         if (message)
             output.push(message);
     }
@@ -1408,7 +1317,6 @@ window.WAPI.sendMessage2 = function(id, message, done) {
     return false;
 };
 
-//Funcao adicionada em 18/06/2020 by Mike
 window.WAPI.sendSeen = async function (id) {
     if (!id) return false;
     var chat = window.WAPI.getChat(id);
@@ -1453,8 +1361,7 @@ window.WAPI.getUnreadMessages = function(includeMe, includeNotifications, use_un
                 continue;
             } else {
                 messageObj.isNewMsg = false;
-                //Miro Emidio - 05/Dez/2019 Alterado para funcionamento em WHATS empresarial/pessoal
-                let message = WAPI.processMessageObj(messageObj, includeMe, false); //includeNotifications);// MUDAR PARA "FALSE" AQUI
+                let message = WAPI.processMessageObj(messageObj, includeMe, false);
                 if (message) {
                     messageGroup.messages.push(message);
                 }
@@ -1463,9 +1370,9 @@ window.WAPI.getUnreadMessages = function(includeMe, includeNotifications, use_un
 
         if (messageGroup.messages.length > 0) {
             output.push(messageGroup);
-        } else { // no messages with isNewMsg true
+        } else { 
             if (use_unread_count) {
-                let n = messageGroupObj.unreadCount; // usara o atributo unreadCount para buscar as ultimas n mensagens do remetente
+                let n = messageGroupObj.unreadCount;
                 for (let i = messages.length - 1; i >= 0; i--) {
                     let messageObj = messages[i];
                     if (n > 0) {
@@ -1474,18 +1381,18 @@ window.WAPI.getUnreadMessages = function(includeMe, includeNotifications, use_un
                             messageGroup.messages.unshift(message);
                             n -= 1;
                         }
-                    } else if (n === -1) { // chat was marked as unread so will fetch last message as unread
+                    } else if (n === -1) {
                         if (!messageObj.fromMe) {
                             let message = WAPI.processMessageObj(messageObj, includeMe, includeNotifications);
                             messageGroup.messages.unshift(message);
                             break;
                         }
-                    } else { // unreadCount = 0
+                    } else { 
                         break;
                     }
                 }
                 if (messageGroup.messages.length > 0) {
-                    messageGroupObj.unreadCount = 0; // reset unread counter
+                    messageGroupObj.unreadCount = 0;
                     output.push(messageGroup);
                 }
             }
@@ -1495,8 +1402,6 @@ window.WAPI.getUnreadMessages = function(includeMe, includeNotifications, use_un
         done(output);
 
     }
-	
-	//mike teste 16/02/2021 tentativa de retornar imagem de perfil
     SetConsoleMessage("getUnreadMessages", JSON.stringify(output));
     return output;
 };
@@ -1690,9 +1595,6 @@ window.WAPI._newMessagesListener = window.Store.Msg.on('add', (newMessage) => {
             window.WAPI._newMessagesQueue.push(message);
             window.WAPI._newMessagesBuffer.push(message);
         }
-
-        // Starts debouncer time to don t call a callback for each message if more than one message arrives
-        // in the same second
         if (!window.WAPI._newMessagesDebouncer && window.WAPI._newMessagesQueue.length > 0) {
             window.WAPI._newMessagesDebouncer = setTimeout(() => {
                 let queuedMessages = window.WAPI._newMessagesQueue;
@@ -1711,7 +1613,6 @@ window.WAPI._newMessagesListener = window.Store.Msg.on('add', (newMessage) => {
                     }
                 });
 
-                // Remove removable callbacks.
                 removeCallbacks.forEach(function(rmCallbackObj) {
                     let callbackIndex = window.WAPI._newMessagesCallbacks.indexOf(rmCallbackObj);
                     window.WAPI._newMessagesCallbacks.splice(callbackIndex, 1);
@@ -1722,13 +1623,11 @@ window.WAPI._newMessagesListener = window.Store.Msg.on('add', (newMessage) => {
 });
 
 window.WAPI._unloadInform = (event) => {
-    // Save in the buffer the ungot unreaded messages
     window.WAPI._newMessagesBuffer.forEach((message) => {
         Object.keys(message).forEach(key => message[key] === undefined ? delete message[key] : '');
     });
     sessionStorage.setItem("saved_msgs", JSON.stringify(window.WAPI._newMessagesBuffer));
 
-    // Inform callbacks that the page will be reloaded.
     window.WAPI._newMessagesCallbacks.forEach(function(callbackObj) {
         if (callbackObj.callback !== undefined) {
             callbackObj.callback({
@@ -1742,13 +1641,6 @@ window.WAPI._unloadInform = (event) => {
 window.addEventListener("unload", window.WAPI._unloadInform, false);
 window.addEventListener("beforeunload", window.WAPI._unloadInform, false);
 window.addEventListener("pageunload", window.WAPI._unloadInform, false);
-
-/**
- * Registers a callback to be called when a new message arrives the WAPI.
- * @param rmCallbackAfterUse - Boolean - Specify if the callback need to be executed only once
- * @param done - function - Callback function to be called when a new message arrives.
- * @returns {boolean}
- */
 window.WAPI.waitNewMessages = function(rmCallbackAfterUse = true, done) {
     window.WAPI._newMessagesCallbacks.push({
         callback: done,
@@ -1756,12 +1648,6 @@ window.WAPI.waitNewMessages = function(rmCallbackAfterUse = true, done) {
     });
     return true;
 };
-
-/**
- * Reads buffered new messages.
- * @param done - function - Callback function to be called contained the buffered messages.
- * @returns {Array}
- */
 window.WAPI.getBufferedNewMessages = function(done) {
     let bufferedMessages = window.WAPI._newMessagesBuffer;
     window.WAPI._newMessagesBuffer = [];
@@ -1770,7 +1656,6 @@ window.WAPI.getBufferedNewMessages = function(done) {
     }
     return bufferedMessages;
 };
-/** End new messages observable functions **/
 
 window.WAPI.sendImage = function(imgBase64, chatid, filename, caption) {
 
@@ -1826,13 +1711,6 @@ window.WAPI.base64ImageToFile = function(b64Data, filename) {
         type: mime
     });
 };
-
-/**
- * Send contact card to a specific chat using the chat ids
- *
- * @param {string} chatId '000000000000@c.us'
- * @param {string|array} contacts '111111111111@c.us' | ['222222222222@c.us', '333333333333@c.us, ... 'nnnnnnnnnnnn@c.us']
- */
 window.WAPI.sendContact = function(chatId, contacts, options = {}) {
     options = Object.assign(Object.assign({}, defaultSendMessageOptionsWAPI), options);
     if (!Array.isArray(contacts)) {
@@ -1860,7 +1738,6 @@ window.WAPI.sendContact = function(chatId, contacts, options = {}) {
             name = contactModel.displayName;
         }
         if (name) {
-            // Create a clone
             contactModel = new Store.ContactModel(contactModel.attributes);
             contactModel.name = name;
             Object.defineProperty(contactModel, 'formattedName', { value: name });
@@ -1880,12 +1757,6 @@ window.WAPI.sendContact = function(chatId, contacts, options = {}) {
     }
     return WAPI.sendRawMessageWAPI(chatId, message, options);
 };
-
-/**
- * Create an chat ID based in a cloned one
- *
- * @param {string} chatId '000000000000@c.us'
- */
 window.WAPI.getNewMessageId = function(chatId) {
     var newMsgId = Store.Msg._models[0].__x_id.clone();
 
@@ -1897,14 +1768,6 @@ window.WAPI.getNewMessageId = function(chatId) {
     return newMsgId;
 };
 
-/**
- * Send VCARD
- *
- * @param {string} chatId '000000000000@c.us'
- * @param {string} vcard vcard as a string
- * @param {string} contactName The display name for the contact. CANNOT BE NULL OTHERWISE IT WILL SEND SOME RANDOM CONTACT FROM YOUR ADDRESS BOOK.
- * @param {string} contactNumber If supplied, this will be injected into the vcard (VERSION 3 ONLY FROM VCARDJS) with the WA id to make it show up with the correct buttons on WA.
- */
 window.WAPI.sendVCard = async function (chatId, contactNumber, contactName) {
     
     var idUser = new window.Store.UserConstructor(chatId, {
@@ -1938,7 +1801,6 @@ window.WAPI.sendVCard = async function (chatId, contactNumber, contactName) {
     var message = {
         ack: 0,
         id: newMsgId,
-        // local: !0,
         self: "in",
         t: parseInt(new Date().getTime() / 1000),
         to: newchat.id,
@@ -1953,13 +1815,6 @@ window.WAPI.sendVCard = async function (chatId, contactNumber, contactName) {
     console.log(Store.addAndSendMsgToChat)
     return (await Promise.all(Store.addAndSendMsgToChat(newchat, message)))[1]=="success"
 };
-
-
-/**
- * Block contact
- * @param {string} id '000000000000@c.us'
- * @param {*} done - function - Callback function to be called when a new message arrives.
- */
 window.WAPI.contactBlock = function(id, done) {
         const contact = window.Store.Contact.get(id);
         if (contact !== undefined) {
@@ -1970,11 +1825,6 @@ window.WAPI.contactBlock = function(id, done) {
         done(false);
         return false;
     }
-    /**
-     * unBlock contact
-     * @param {string} id '000000000000@c.us'
-     * @param {*} done - function - Callback function to be called when a new message arrives.
-     */
 window.WAPI.contactUnblock = function(id, done) {
     const contact = window.Store.Contact.get(id);
     if (contact !== undefined) {
@@ -1985,18 +1835,8 @@ window.WAPI.contactUnblock = function(id, done) {
     done(false);
     return false;
 }
-
-
-/** Joins a group via the invite link, code, or message
- * @param link This param is the string which includes the invite link or code. The following work:
- * - Follow this link to join my WA group: https://chat.whatsapp.com/DHTGJUfFJAV9MxOpZO1fBZ
- * - https://chat.whatsapp.com/DHTGJUfFJAV9MxOpZO1fBZ
- * - DHTGJUfFJAV9MxOpZO1fBZ
- * @returns Promise<string | boolean> Either false if it didn't work, or the group id.
- */
 window.WAPI.joinGroupViaLink = async function(link){
     let code = link;
-    //is it a link? if not, assume it's a code, otherwise, process the link to get the code.
     if(link.includes('chat.whatsapp.com')) {
         if(!link.match(/chat.whatsapp.com\/([\w\d]*)/g).length) return false;
         code = link.match(/chat.whatsapp.com\/([\w\d]*)/g)[0].replace('chat.whatsapp.com\/','');
@@ -2007,12 +1847,6 @@ window.WAPI.joinGroupViaLink = async function(link){
     if(!group.id) return false;
     return group.id._serialized
 }
-
-/**
- * Add participant to Group
- * @param {*} idGroup '0000000000-00000000@g.us'
- * @param {*} idParticipant '000000000000@c.us'
- */
 window.WAPI.addParticipant = async function (idGroup, idParticipant) {
     const chat = Store.Chat.get(idGroup);
     const add = Store.Contact.get(idParticipant);
@@ -2030,18 +1864,6 @@ window.WAPI.removeParticipant = async function(idGroup, idParticipant){
     
 } 
 
-/**
- * Promote Participant to Admin in Group
- * @param {*} idGroup '0000000000-00000000@g.us'
- * @param {*} idParticipant '000000000000@c.us'
- */
-
-
-/**
- * Demote Admin of Group
- * @param {*} idGroup '0000000000-00000000@g.us'
- * @param {*} idParticipant '000000000000@c.us'
- */
 window.WAPI.demoteParticipant = async function (idGroup, idParticipant) {
     await window.Store.WapQuery.demoteParticipants(idGroup, [idParticipant])
     const chat = Store.Chat.get(idGroup);
@@ -2051,8 +1873,6 @@ window.WAPI.demoteParticipant = async function (idGroup, idParticipant) {
    
 }
 
-//Nova funcao alternativa para enviar mensagens(Nao envia para grupos)
-//Criada em 27/11/2019 Mike
 window.WAPI.sendMessageToID2 = function(id, msgText) {
     
     window.Store.WapQuery.queryExist(id).then(function(e) {
@@ -2075,7 +1895,6 @@ window.WAPI.sendMessageToID2 = function(id, msgText) {
     
 }
 
-//Validar numero whatsapp 12/02/2020
 window.WAPI.isValidNumber = async function (phoneId) {
     isValid = window.Store.WapQuery.queryExist(phoneId).then(result => {
         return result.jid !== undefined;
@@ -2147,18 +1966,6 @@ function prepareMessageButtons(e, t) {
                     })))), e
 }
 
-
-
-/** 28/04/2020 - Mike
- * Send location
- *
- * @param {string} chatId '558199999999@c.us'
- * @param {string} lat latitude
- * @param {string} lng longitude
- * @param {string} loc Texto link para a localizacao
- */
- 
- 
 window.WAPI.sendLocation = async function (chatId, options) {
     options = Object.assign(Object.assign({}, defaultSendMessageOptionsWAPI), options);
     const location = options.name && options.address
@@ -2221,9 +2028,6 @@ window.WAPI.getGroupInviteLink = async function (chatId) {
 
 }
 
-/**
- * Returns an object with all of your host device details
- */
 window.WAPI.getMe = function(){
    	
 	vMe = {...WAPI.quickClean({
@@ -2383,7 +2187,6 @@ window.WAPI.sendMessageOptions = async function (chatId, content, options = {}) 
           };
         }
       } catch (_) {
-        // not a vcard
       }
     }
   
@@ -2488,10 +2291,6 @@ async function prepareRawMessageWAPI(chat, message, options = {}) {
 
     return message;
 }
-
-/**
- * Mark a chat as read and send SEEN event
- */
 async function markIsRead(chatId) {
     const chat = assertGetChat(chatId);
     const unreadCount = chat.unreadCount;
@@ -2529,7 +2328,7 @@ window.WAPI.sendRawMessageWAPI = async function (chatId, rawMessage, options = {
     console.log('Olha o rawMessage: ', rawMessage);
 
     const result = await Store.addAndSendMsgToChat(chat, rawMessage);
-    console.log('olha o result: ', result); //Aqui retornar 0
+    console.log('olha o result: ', result);
     console.log(`message ${rawMessage.id} queued`);
     const message = await result[0];
     if (options.waitForAck) {
@@ -2560,20 +2359,17 @@ window.WAPI.sendPool = async function(chatId, title, surveyList) {
 	return await (0, sendRawMessageWAPI)(chatId, survey)
 }
 
-//Mike W. Lustosa 14/11/2022
 window.WAPI.onIncomingCall = function (onIncomingCallCallback) {
 	window.Store.Call.on('add', WAPI.onIncomingCallCallback);		
     return true;	
 }
 
-//Mike W. Lustosa 05/08/2023
 window.WAPI.onGetUnReadMessageFromMe = function () {
 	Store.Chat.on("change:hasUnread", (jsonMsg) => {
 		SetConsoleMessage("getUnreadMessagesFromMe", JSON.stringify(jsonMsg));
 	});
 }
 
-//Mike W. Lustosa 14/11/2022
 window.WAPI.onIncomingCallCallback = async function() {
 	SetConsoleMessage('getIncomingCall', window.Store.Call._models[0].__x_peerJid.user)
 	window.Store.Call._models = []
